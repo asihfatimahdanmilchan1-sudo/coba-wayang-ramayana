@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Puzzle Ramawijaya</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f5f2e9;
+}
+
+h2{
+    margin-top: 20px;
+}
+
+#puzzle-container{
+    width: 360px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(2, 120px);
+    gap: 4px;
+}
+
+.piece{
+    width: 120px;
+    height: 120px;
+    border: 2px solid #333;
+    cursor: grab;
+    background-image: url("A_jigsaw_puzzle_of_Ramawijaya,_a_character_from_th.png");
+    background-size: 360px 240px;
+}
+
+#name{
+    margin-top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Permainan Bongkar Pasang Wayang</h2>
+
+<div id="puzzle-container"></div>
+
+<div id="name">Ramawijaya</div>
+
+<script>
+const container = document.getElementById("puzzle-container");
+
+let pieces = [];
+
+// buat 6 potongan puzzle
+for(let i=0;i<6;i++){
+    let div = document.createElement("div");
+    div.className = "piece";
+    div.draggable = true;
+
+    let x = (i % 3) * 120;
+    let y = Math.floor(i / 3) * 120;
+
+    div.style.backgroundPosition = `-${x}px -${y}px`;
+    div.dataset.index = i;
+
+    pieces.push(div);
+}
+
+// acak posisi
+pieces.sort(()=> Math.random()-0.5);
+
+// tampilkan
+pieces.forEach(p => container.appendChild(p));
+
+// drag drop
+let dragSrc = null;
+
+document.querySelectorAll(".piece").forEach(piece=>{
+    piece.addEventListener("dragstart", function(){
+        dragSrc = this;
+    });
+
+    piece.addEventListener("dragover", function(e){
+        e.preventDefault();
+    });
+
+    piece.addEventListener("drop", function(){
+        if(dragSrc !== this){
+            let temp = this.style.backgroundPosition;
+            this.style.backgroundPosition = dragSrc.style.backgroundPosition;
+            dragSrc.style.backgroundPosition = temp;
+        }
+    });
+});
+</script>
+
+</body>
+</html>
