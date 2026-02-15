@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Bongkar Pasang Wayang Ramayana</title>
+<style>
+body{
+ font-family: Arial, sans-serif;
+ text-align:center;
+ background:#f5efe0;
+ margin:0;
+}
+h1{
+ background:#5a3e1b;
+ color:white;
+ padding:15px;
+ margin:0;
+}
+.game-box{
+ display:inline-block;
+ background:white;
+ margin:20px;
+ padding:15px;
+ border-radius:15px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(3,100px);
+ gap:5px;
+ justify-content:center;
+ margin-top:10px;
+}
+.grid img{
+ width:100px;
+ height:100px;
+ cursor:pointer;
+ border-radius:8px;
+}
+button{
+ padding:12px 25px;
+ border:none;
+ background:#8b0000;
+ color:white;
+ border-radius:10px;
+ cursor:pointer;
+ margin-top:15px;
+ font-size:16px;
+}
+iframe{
+ border-radius:15px;
+ margin-top:15px;
+}
+
+/* Splash Screen */
+#splash{
+ position:fixed;
+ top:0;
+ left:0;
+ width:100%;
+ height:100%;
+ background:linear-gradient(135deg,#5a3e1b,#c8a96a);
+ color:white;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ z-index:9999;
+ text-align:center;
+ padding:20px;
+}
+#splash h1{
+ background:none;
+ font-size:32px;
+ margin-bottom:10px;
+}
+#splash h2{
+ font-weight:normal;
+ margin-bottom:30px;
+}
+</style>
+</head>
+<body>
+
+<!-- Splash Screen Pembuka -->
+<div id="splash">
+ <h1>Game Bongkar Pasang Wayang Ramayana</h1>
+ <h2>Pencipta Game:<br><b>Asih Fatimah</b><br>SMP N 1 Susukan</h2>
+ <button onclick="startGame()">Mulai Game</button>
+</div>
+
+<h1>Game Bongkar Pasang Wayang Ramayana</h1>
+
+<!-- Musik Kebo Giro -->
+<h3>Musik Pengiring Kebo Giro</h3>
+<iframe width="300" height="170" src="https://www.youtube.com/embed/WeChUDXrcHE" allowfullscreen></iframe>
+
+<div id="games"></div>
+
+<script>
+function startGame(){
+ document.getElementById('splash').style.display='none';
+}
+
+const characters = [
+{
+ name:"Rama",
+ img:"https://upload.wikimedia.org/wikipedia/commons/5/5f/Wayang_Rama.jpg"
+},
+{
+ name:"Sinta",
+ img:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Wayang_Sinta.jpg"
+},
+{
+ name:"Hanoman",
+ img:"https://upload.wikimedia.org/wikipedia/commons/2/27/Wayang_Hanoman.jpg"
+},
+{
+ name:"Rahwana",
+ img:"https://upload.wikimedia.org/wikipedia/commons/7/73/Wayang_Rahwana.jpg"
+}
+];
+
+function createGame(char){
+ let box=document.createElement("div");
+ box.className="game-box";
+ box.innerHTML=`<h2>${char.name}</h2>
+ <button onclick="shuffle('${char.name}')">Acak</button>
+ <div class="grid" id="grid-${char.name}"></div>`;
+ document.getElementById("games").appendChild(box);
+
+ let grid=document.getElementById("grid-"+char.name);
+ let pieces=splitImage(char.img);
+ pieces.forEach(p=>grid.appendChild(p));
+}
+
+function splitImage(src){
+ let arr=[];
+ for(let i=0;i<9;i++){
+ let img=document.createElement("img");
+ img.src=src;
+ img.draggable=true;
+ img.dataset.index=i;
+
+ img.addEventListener("dragstart",dragStart);
+ img.addEventListener("dragover",dragOver);
+ img.addEventListener("drop",drop);
+
+ arr.push(img);
+ }
+ return arr;
+}
+
+let dragged=null;
+function dragStart(e){ dragged=e.target; }
+function dragOver(e){ e.preventDefault(); }
+function drop(e){
+ if(e.target.tagName==="IMG"){
+ let temp=e.target.src;
+ e.target.src=dragged.src;
+ dragged.src=temp;
+ }
+}
+
+function shuffle(name){
+ let grid=document.getElementById("grid-"+name);
+ let imgs=[...grid.children];
+ imgs.sort(()=>Math.random()-0.5);
+ imgs.forEach(img=>grid.appendChild(img));
+}
+
+characters.forEach(c=>createGame(c));
+</script>
+
+</body>
+</html>
