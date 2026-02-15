@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bongkar Pasang Ramawijaya</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        
+        #game-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(2, 100px);
+            gap: 5px;
+            border: 5px solid #34495e;
+            padding: 5px;
+            background-color: #bdc3c7;
+            border-radius: 8px;
+        }
+
+        .tile {
+            width: 100px;
+            height: 100px;
+            background-image: url('https://placehold.co/300x200/orange/white?text=Ramawijaya'); /* Ganti dengan URL gambar asli */
+            background-size: 300px 200px;
+            cursor: grab;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+
+        .tile:active { cursor: grabbing; }
+
+        /* Posisi Background untuk tiap potongan */
+        .pos-0 { background-position: 0 0; }
+        .pos-1 { background-position: -100px 0; }
+        .pos-2 { background-position: -200px 0; }
+        .pos-3 { background-position: 0 -100px; }
+        .pos-4 { background-position: -100px -100px; }
+        .pos-5 { background-position: -200px -100px; }
+
+        .name-label {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e67e22;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover { background-color: #219150; }
+
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Permainan Bongkar Pasang</h1>
+    
+    <div id="game-container">
+        </div>
+
+    <div class="name-label">RAMAWIJAYA</div>
+
+    <button onclick="shuffleTiles()">Acak Gambar</button>
+
+    <footer>Dibuat oleh: <b>Asih Fatimah</b></footer>
+
+    <script>
+        const container = document.getElementById('game-container');
+        let tiles = [0, 1, 2, 3, 4, 5];
+
+        function createBoard() {
+            container.innerHTML = '';
+            tiles.forEach((tileNum, index) => {
+                const div = document.createElement('div');
+                div.classList.add('tile');
+                div.classList.add('pos-' + tileNum);
+                div.draggable = true;
+                div.dataset.index = index;
+
+                // Event Listeners untuk Drag and Drop
+                div.addEventListener('dragstart', dragStart);
+                div.addEventListener('dragover', dragOver);
+                div.addEventListener('drop', drop);
+                
+                container.appendChild(div);
+            });
+        }
+
+        let draggedIndex = null;
+
+        function dragStart(e) {
+            draggedIndex = e.target.dataset.index;
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            const targetIndex = e.target.dataset.index;
+            if (targetIndex !== undefined) {
+                // Tukar posisi dalam array
+                [tiles[draggedIndex], tiles[targetIndex]] = [tiles[targetIndex], tiles[draggedIndex]];
+                createBoard();
+                checkWin();
+            }
+        }
+
+        function shuffleTiles() {
+            tiles.sort(() => Math.random() - 0.5);
+            createBoard();
+        }
+
+        function checkWin() {
+            if (tiles.every((val, index) => val === index)) {
+                setTimeout(() => alert('Hebat! Kamu berhasil menyusun gambar Ramawijaya!'), 100);
+            }
+        }
+
+        // Inisialisasi awal
+        shuffleTiles();
+    </script>
+</body>
+</html>
